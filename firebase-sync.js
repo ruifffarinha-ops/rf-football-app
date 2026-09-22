@@ -61,7 +61,8 @@ async function hydrateFromCloud(user) {
   setStatus('A sincronizar…');
   const matchRef = doc(db, 'users', user.uid, 'app', 'match');
   const exercisesRef = doc(db, 'users', user.uid, 'app', 'exercises');
-  const [matchSnap, exercisesSnap] = await Promise.all([getDoc(matchRef), getDoc(exercisesRef)]);
+  const reportsRef = doc(db, 'users', user.uid, 'app', 'reports');
+  const [matchSnap, exercisesSnap, reportsSnap] = await Promise.all([getDoc(matchRef), getDoc(exercisesRef), getDoc(reportsRef)]);
   let reload = false;
 
   if (matchSnap.exists()) {
@@ -88,6 +89,19 @@ async function hydrateFromCloud(user) {
   } else {
     const data = JSON.parse(localStorage.getItem('rf-football-exercises') || '[]');
     await setDoc(exercisesRef, {data, updatedAt: Date.now()});
+  }
+
+  if (reportsSnap.exists()) {
+    const remote = reportsSnap.data();
+    const localUpdated = Number(localStorage.getItem('rf-football-reports-updated') || 0);
+    if ((remote.updatedAt || 0) > localUpdated && Array.isArray(remote.data)) {
+      localStorage.setItem('rf-football-reports', JSON.stringify(remote.data));
+      localStorage.setItem('rf-football-reports-updated', String(remote.updatedAt));
+      reload = true;
+    }
+  } else {
+    const data = JSON.parse(localStorage.getItem('rf-football-reports') || '[]');
+    await setDoc(reportsRef, {data, updatedAt: Date.now()});
   }
 
   setStatus(navigator.onLine ? 'Sincronizado' : 'Modo offline', navigator.onLine ? 'synced' : 'offline');
@@ -126,6 +140,17 @@ window.addEventListener('rf:exercises-changed', async event => {
   setStatus('A guardar…');
   try {
     await setDoc(doc(db, 'users', activeUser.uid, 'app', 'exercises'), event.detail);
+    setStatus('Sincronizado', 'synced');
+  } catch {
+    setStatus('Guardado offline', 'offline');
+  }
+});
+
+window.addEventListener('rf:reports-changed', async event => {
+  if (!activeUser) return;
+  setStatus('A guardar…');
+  try {
+    await setDoc(doc(db, 'users', activeUser.uid, 'app', 'reports'), event.detail);
     setStatus('Sincronizado', 'synced');
   } catch {
     setStatus('Guardado offline', 'offline');
