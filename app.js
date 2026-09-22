@@ -4,6 +4,12 @@ const eventTypes = [
   {id:'target',icon:'◉',name:'Remate enquadrado',desc:'À baliza',group:'Ofensivos'},
   {id:'corner',icon:'⚑',name:'Canto',desc:'Bola parada ofensiva',group:'Ofensivos'},
   {id:'goal',icon:'●',name:'Golo',desc:'Golo do adversário',type:'danger',group:'Ofensivos'},
+  {id:'tackle',icon:'◇',name:'Desarme',desc:'Retirada da bola ao adversário',group:'Defensivos'},
+  {id:'interception',icon:'↯',name:'Interceção',desc:'Corte de uma linha de passe',group:'Defensivos'},
+  {id:'clearance',icon:'↗',name:'Corte / alívio',desc:'Afastamento de uma situação de perigo',group:'Defensivos'},
+  {id:'defensiveDuel',icon:'⚔',name:'Duelo defensivo ganho',desc:'Duelo individual vencido',group:'Defensivos'},
+  {id:'shotBlock',icon:'▣',name:'Bloqueio de remate',desc:'Remate intercetado por um defensor',group:'Defensivos'},
+  {id:'goalkeeperSave',icon:'✋',name:'Defesa do GR',desc:'Intervenção do guarda-redes',group:'Defensivos'},
   {id:'recover',icon:'↥',name:'Recuperação alta',desc:'No meio-campo ofensivo',group:'Transições'},
   {id:'loss',icon:'↧',name:'Perda perigosa',desc:'Em zona de risco',type:'danger',group:'Transições'},
   {id:'transition',icon:'⇄',name:'Transição rápida',desc:'Ataque após recuperação',group:'Transições'},
@@ -29,7 +35,7 @@ function formatTime(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${Str
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1200)}
 function renderEvents(){
   const counts=Object.fromEntries(eventTypes.map(e=>[e.id,state.events.filter(x=>x.id===e.id).length]));
-  $('#eventGrid').innerHTML=['Ofensivos','Transições','Controlo'].map(group=>`<section class="event-group"><h3 class="event-group-title">${group}</h3><div class="event-group-grid">${eventTypes.filter(e=>e.group===group).map(e=>`<article class="event-card ${e.type||''}" title="${e.desc}"><span class="icon">${e.icon}</span><button data-event="${e.id}" aria-label="Adicionar ${e.name}">＋</button><h3>${e.name}</h3><p>${e.desc}</p><strong>${counts[e.id]}</strong></article>`).join('')}</div></section>`).join('');
+  $('#eventGrid').innerHTML=['Ofensivos','Defensivos','Transições','Controlo'].map(group=>`<section class="event-group"><h3 class="event-group-title">${group}</h3><div class="event-group-grid">${eventTypes.filter(e=>e.group===group).map(e=>`<article class="event-card ${e.type||''}" title="${e.desc}"><span class="icon">${e.icon}</span><button data-event="${e.id}" aria-label="Adicionar ${e.name}">＋</button><h3>${e.name}</h3><p>${e.desc}</p><strong>${counts[e.id]}</strong></article>`).join('')}</div></section>`).join('');
   $('#eventCount').textContent=`${state.events.length} registados`; $('#undoBtn').disabled=!state.events.length;
   const typeFilter=$('#eventTypeFilter')?.value||'',periodFilter=$('#eventPeriodFilter')?.value||'';const filtered=state.events.map((event,index)=>({event,index})).filter(({event:x})=>(!typeFilter||x.id===typeFilter)&&(!periodFilter||x.period===periodFilter));
   $('#eventLog').className=filtered.length?'':'empty'; $('#eventLog').innerHTML=filtered.length?filtered.slice(-10).reverse().map(({event:x,index})=>{const type=eventTypes.find(e=>e.id===x.id),zone=observationZones.find(z=>z[0]===(x.zone||'center-mid'))?.[1]||'Zona não definida';return`<div class="log-row"><time>${formatTime(x.time)}</time><span>${type.icon}</span><b>${type.name}</b><span class="event-zone">${zone} · ${x.period||'1.ª parte'}${x.player?' · '+x.player:''}</span><button class="evidence-btn ${x.evidence?'active':''}" data-evidence="${index}" title="Marcar como evidência">★</button>${x.note?`<div class="event-note">${x.note}</div>`:''}</div>`}).join(''):'Nenhum evento corresponde aos filtros selecionados.';renderLastEvent();
