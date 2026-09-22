@@ -35,6 +35,13 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 function save(){const updatedAt=Date.now();localStorage.setItem('rf-football-match',JSON.stringify(state));localStorage.setItem('rf-football-match-updated',String(updatedAt));window.dispatchEvent(new CustomEvent('rf:match-changed',{detail:{data:state,updatedAt}}));$('#savedText').textContent='Guardado agora';setTimeout(()=>$('#savedText').textContent='Guardado',900)}
 function formatTime(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1200)}
+let deferredInstallPrompt=null;
+const installAppBtn=$('#installAppBtn');
+const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent),isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if(isIos&&!isStandalone){installAppBtn.hidden=false;installAppBtn.dataset.ios='true'}
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;installAppBtn.hidden=false});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;installAppBtn.hidden=true;toast('RF Football instalada')});
+installAppBtn.onclick=async()=>{if(installAppBtn.dataset.ios){alert('No iPhone: toque no botão Partilhar do Safari e escolha “Adicionar ao ecrã principal”.');return}if(!deferredInstallPrompt){toast('Abra a aplicação no Chrome ou Edge para instalar');return}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installAppBtn.hidden=true};
 function persistReports(){const updatedAt=Date.now();localStorage.setItem('rf-football-reports',JSON.stringify(reports));localStorage.setItem('rf-football-reports-updated',String(updatedAt));window.dispatchEvent(new CustomEvent('rf:reports-changed',{detail:{data:reports,updatedAt}}));renderReportLibrary()}
 function reportTitle(snapshot){const date=snapshot.matchDate?new Intl.DateTimeFormat('pt-PT').format(new Date(snapshot.matchDate+'T12:00:00')):new Intl.DateTimeFormat('pt-PT').format(new Date());return `${snapshot.team||'Equipa'} — ${date}`}
 function renderReportLibrary(){const list=$('#reportList');if(!list)return;$('#reportCount').textContent=`${reports.length} ${reports.length===1?'relatório':'relatórios'}`;list.className=reports.length?'report-list':'empty';list.innerHTML=reports.length?reports.map(r=>`<article class="saved-report ${r.id===activeReportId?'active':''}"><div><h3>${escapeText(r.title)}</h3><p>${escapeText(r.competition||'Competição não definida')} · ${r.eventCount||0} acontecimentos · Atualizado ${new Intl.DateTimeFormat('pt-PT',{dateStyle:'short',timeStyle:'short'}).format(new Date(r.updatedAt))}</p></div><div class="saved-report-actions"><button data-open-report="${r.id}">Abrir e editar</button><button data-copy-report="${r.id}" title="Duplicar">⧉</button><button class="danger" data-delete-report="${r.id}" title="Eliminar">×</button></div></article>`).join(''):'Ainda não existem relatórios guardados.'}
@@ -143,7 +150,7 @@ $('#eventTypeFilter').onchange=renderEvents;$('#eventPeriodFilter').onchange=ren
 $('#printBtn').onclick=()=>window.print();
 $('#saveReportBtn').onclick=saveCurrentReport;
 $('#shareBtn').onclick=async()=>{renderReport();const text=`Relatório: ${state.team}\n${generateInsights().join('\n')}\nAtaques: ${count('attack')} · Remates: ${count('shot')} · Golos: ${state.score}\nPontos fortes: ${state.strengths||'—'}\nPontos fracos: ${state.weaknesses||state.vulnerabilities||'—'}\nComo explorar: ${state.howToExploit||'—'}\nTreino recomendado: ${state.trainingRecommendations||'—'}`;if(navigator.share){try{await navigator.share({title:`Observação — ${state.team}`,text})}catch{}}else{await navigator.clipboard.writeText(text);toast('Relatório copiado')}};
-sync();renderReportLibrary(); if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js?v=5');
+sync();renderReportLibrary(); if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js?v=6');
 
 // Construtor de exercícios
 const canvas=$('#tacticsCanvas'),ctx=canvas.getContext('2d');

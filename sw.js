@@ -1,5 +1,5 @@
-const CACHE='rf-football-v5';
-const ASSETS=['./','index.html','styles.css?v=5','app.js?v=5','firebase-sync.js?v=5','manifest.webmanifest'];
+const CACHE='rf-football-v6';
+const ASSETS=['./','index.html','styles.css?v=6','app.js?v=6','firebase-sync.js?v=6','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-192.png','icons/icon-maskable-512.png','icons/apple-touch-icon.png','icons/favicon-32.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
