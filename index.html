@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b3f2e">
+  <meta name="description" content="RF Football — observação, análise e construção de exercícios de futebol">
+  <title>RF Football</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+    <form class="login-card" id="loginForm">
+      <span class="brand-mark login-brand" aria-hidden="true">RF</span>
+      <span class="eyebrow">RF FOOTBALL</span>
+      <h1 id="loginTitle">Entrar na aplicação</h1>
+      <p>Observação, análise e exercícios de futebol.</p>
+      <label>Email<input id="loginEmail" type="email" autocomplete="username" required placeholder="email@exemplo.pt"></label>
+      <label>Palavra-passe<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+      <button class="primary" id="loginButton" type="submit">Entrar</button>
+      <div class="login-error" id="loginError" role="alert"></div>
+    </form>
+  </section>
+  <header class="app-header">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true">RF</span>
+      <div>
+        <span class="eyebrow">RF FOOTBALL</span>
+        <h1 id="appTitle">Observação do Adversário</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="sync-status" id="syncStatus">A ligar…</span>
+      <button class="icon-btn" id="accountBtn" aria-label="Terminar sessão" title="Terminar sessão">♙</button>
+      <button class="icon-btn" id="resetBtn" aria-label="Novo jogo" title="Novo jogo">↻</button>
+    </div>
+  </header>
+
+  <nav class="module-nav" aria-label="Módulos RF Football">
+    <button class="active" data-module="observation">◉ Observação</button>
+    <button data-module="builder">▧ Exercícios</button>
+  </nav>
+
+  <main id="observationModule" class="module active">
+    <section class="match-card card">
+      <div class="scope-switch" aria-label="Tipo de observação">
+        <button class="active" data-scope="opponent">Adversário</button>
+        <button data-scope="own">Minha equipa</button>
+      </div>
+      <details class="match-details">
+        <summary>Dados do jogo e contexto</summary>
+        <div class="match-details-grid">
+          <label>Competição<input id="competition" placeholder="Ex.: Campeonato Distrital"></label>
+          <label>Data<input id="matchDate" type="date"></label>
+          <label>Local<input id="venue" placeholder="Campo / estádio"></label>
+          <label>Observador<input id="analyst" placeholder="Nome do observador"></label>
+          <label>Sistema da equipa<input id="formation" placeholder="Ex.: 1-4-3-3"></label>
+          <label>Sistema adversário<input id="opponentFormation" placeholder="Ex.: 1-4-4-2"></label>
+        </div>
+      </details>
+      <div class="match-top">
+        <div class="status"><i></i><span id="statusText">PRONTO</span></div>
+        <span id="savedText">Guardado</span>
+      </div>
+      <div class="scoreboard">
+        <input id="team" value="Adversário" aria-label="Nome da equipa">
+        <div class="score"><button data-score="-1">−</button><strong id="score">0</strong><button data-score="1">+</button></div>
+      </div>
+      <div class="clock" id="clock">00:00</div>
+      <div class="clock-actions">
+        <button class="primary" id="clockBtn">▶ Iniciar jogo</button>
+        <button class="secondary" id="periodBtn">1.ª parte</button>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Áreas da aplicação">
+      <button class="active" data-tab="jogo">Jogo</button>
+      <button data-tab="registo">Direto</button>
+      <button data-tab="modelo">Modelo</button>
+      <button data-tab="jogadores">Jogadores</button>
+      <button data-tab="relatorio">Relatório</button>
+    </nav>
+
+    <section class="panel active" id="jogo">
+      <div class="section-title"><div><span>CONTEXTO</span><h2>Preparação da observação</h2></div></div>
+      <div class="analysis-form card">
+        <label>Jornada / fase<input id="matchRound" placeholder="Ex.: Jornada 12 / Meia-final"></label>
+        <label>Condição<select id="homeAway"><option value="">Selecionar</option><option>Casa</option><option>Fora</option><option>Campo neutro</option></select></label>
+        <label>Objetivo da observação<textarea id="observationGoal" placeholder="O que queremos descobrir ou confirmar?"></textarea></label>
+        <label>Resultado final<input id="finalScore" placeholder="Ex.: 2–1"></label>
+        <label>Alterações de sistema<textarea id="systemChanges" placeholder="Minuto e alteração observada…"></textarea></label>
+        <label>Substituições relevantes<textarea id="substitutions" placeholder="Minuto, jogador e impacto…"></textarea></label>
+      </div>
+    </section>
+
+    <section class="panel" id="registo">
+      <div class="section-title"><div><span>REGISTO RÁPIDO</span><h2>O que aconteceu?</h2></div><span class="hint">toque para adicionar</span></div>
+      <details class="quick-context-wrap card" open>
+        <summary><span>Contexto do próximo evento</span><b id="quickContextSummary">Organização ofensiva · Neutro</b></summary>
+      <div class="quick-context">
+        <label>Momento<select id="eventMoment"><option>Organização ofensiva</option><option>Organização defensiva</option><option>Transição ofensiva</option><option>Transição defensiva</option><option>Bola parada</option></select></label>
+        <fieldset class="outcome-field"><legend>Resultado</legend><input type="hidden" id="eventOutcome" value="Neutro"><div class="outcome-switch"><button type="button" data-outcome="Positivo">Positivo</button><button type="button" class="active" data-outcome="Neutro">Neutro</button><button type="button" data-outcome="Negativo">Negativo</button></div></fieldset>
+        <label>Relação numérica<select id="eventRelation"><option value="">Não definida</option><option>Superioridade</option><option>Igualdade</option><option>Inferioridade</option></select></label>
+        <label>Estado do jogo<select id="matchState"><option>Empatado</option><option>A ganhar</option><option>A perder</option></select></label>
+        <label>Jogador<input id="eventPlayer" list="eventPlayerList" placeholder="N.º ou nome"><datalist id="eventPlayerList"></datalist></label>
+        <label>Nota rápida<input id="eventQuickNote" placeholder="Observação curta"></label>
+      </div>
+      </details>
+      <div class="zone-selector card">
+        <div class="zone-selector-head"><div><b>Zona do acontecimento</b><span id="selectedZoneText">Centro · Meio-campo</span></div><button class="direction-btn" id="attackDirection" type="button">Ataque →</button></div>
+        <div class="zone-grid" id="zoneGrid" aria-label="Selecionar zona do campo"></div>
+      </div>
+      <div class="event-grid" id="eventGrid"></div>
+      <button class="undo" id="undoBtn" disabled>↶ Anular último evento</button>
+      <div class="recent card">
+        <div class="section-title compact"><h2>Últimos eventos</h2><span id="eventCount">0 registados</span></div>
+        <div class="event-filters"><select id="eventTypeFilter"><option value="">Todos os eventos</option></select><select id="eventPeriodFilter"><option value="">Todo o jogo</option><option>1.ª parte</option><option>2.ª parte</option></select></div>
+        <div id="eventLog" class="empty">Ainda não há eventos. Comece o cronómetro e use os botões acima.</div>
+      </div>
+      <div class="live-action-bar" id="liveActionBar">
+        <div><small>ÚLTIMO EVENTO</small><b id="lastEventText">Nenhum evento registado</b></div>
+        <button id="undoLastQuick" disabled>↶ Anular</button>
+        <button id="evidenceLastQuick" disabled>★ Evidência</button>
+        <button id="openReportQuick">Relatório</button>
+      </div>
+    </section>
+
+    <section class="panel" id="modelo">
+      <div class="section-title"><div><span>MODELO DE JOGO</span><h2>Notas de observação</h2></div></div>
+      <div class="tactical-profile card">
+        <label>Altura do bloco<select id="blockHeight"><option value="">Selecionar</option><option>Baixo</option><option>Médio</option><option>Alto</option></select></label>
+        <label>Pressão<select id="pressingStyle"><option value="">Selecionar</option><option>Individual</option><option>Zonal</option><option>Mista</option><option>Após passe atrasado</option><option>Após perda</option></select></label>
+        <label>Construção<select id="buildUpStyle"><option value="">Selecionar</option><option>Curta e apoiada</option><option>Direta</option><option>Mista</option><option>Saída a 3</option><option>Saída a 4</option></select></label>
+        <label>Ritmo ofensivo<select id="attackTempo"><option value="">Selecionar</option><option>Lento</option><option>Moderado</option><option>Rápido</option><option>Muito vertical</option></select></label>
+      </div>
+      <div id="notesList"></div>
+      <div class="section-title"><div><span>SÍNTESE</span><h2>Conclusões aplicáveis</h2></div></div>
+      <div class="conclusions-grid">
+        <label class="note-card"><span>Pontos fortes</span><textarea id="strengths" placeholder="Comportamentos consistentes e difíceis de contrariar…"></textarea></label>
+        <label class="note-card"><span>Pontos fracos</span><textarea id="weaknesses" placeholder="Limitações observadas e contexto em que surgem…"></textarea></label>
+        <label class="note-card"><span>Como condicionar</span><textarea id="howToCondition" placeholder="Como limitar os pontos fortes…"></textarea></label>
+        <label class="note-card"><span>Como explorar</span><textarea id="howToExploit" placeholder="Espaços, jogadores ou comportamentos a atacar…"></textarea></label>
+        <label class="note-card"><span>Recomendações para o treino</span><textarea id="trainingRecommendations" placeholder="Conteúdos a preparar durante a semana…"></textarea></label>
+        <label class="note-card"><span>Prioridade</span><select id="analysisPriority"><option value="">Selecionar</option><option>Baixa</option><option>Média</option><option>Alta</option></select></label>
+      </div>
+    </section>
+
+    <section class="panel" id="jogadores">
+      <div class="section-title"><div><span>ANÁLISE INDIVIDUAL</span><h2>Jogadores observados</h2></div></div>
+      <div class="card players">
+        <div class="section-title compact"><h2>Jogadores de referência</h2><button id="addPlayer">＋ Adicionar</button></div>
+        <div id="playersList"></div>
+      </div>
+      <label class="note-card vulnerability"><span>Vulnerabilidades a explorar</span><textarea id="vulnerabilities" placeholder="Onde e como pode a equipa ser explorada?"></textarea></label>
+    </section>
+
+    <section class="panel" id="relatorio">
+      <div id="report"></div>
+      <div class="report-actions">
+        <button class="primary" id="shareBtn">↗ Partilhar relatório</button>
+        <button class="secondary" id="printBtn">⤓ Guardar PDF / Imprimir</button>
+      </div>
+    </section>
+  </main>
+
+  <main id="builderModule" class="module">
+    <section class="builder-heading">
+      <div><span class="eyebrow">CONSTRUTOR DE EXERCÍCIOS</span><h2>Quadro tático</h2></div>
+      <button class="secondary small" id="newExercise">＋ Novo</button>
+    </section>
+    <section class="exercise-meta card">
+      <label>Nome do exercício<input id="exerciseName" placeholder="Ex.: Posse 4x4 + 3 apoios"></label>
+      <div class="meta-grid">
+        <label>Categoria<select id="exerciseCategory"><option value="">Selecionar</option><option>Ativação</option><option>Posse de bola</option><option>Finalização</option><option>Organização ofensiva</option><option>Organização defensiva</option><option>Transições</option><option>Bola parada</option><option>Físico-técnico</option></select></label>
+        <label>Escalão<input id="exerciseAge" placeholder="Ex.: Sub-15 / Sénior"></label>
+        <label>N.º de jogadores<input id="exercisePlayers" inputmode="numeric" placeholder="Ex.: 12 + 2 GR"></label>
+        <label>Espaço<input id="exerciseSpace" placeholder="Ex.: 40 × 30 m"></label>
+        <label>Objetivo<input id="exerciseObjective" placeholder="Ex.: reação à perda"></label>
+        <label>Duração<input id="exerciseDuration" placeholder="Ex.: 4 × 4 min"></label>
+        <label>Séries<input id="exerciseSets" placeholder="Ex.: 4 séries"></label>
+        <label>Recuperação<input id="exerciseRest" placeholder="Ex.: 2 min"></label>
+      </div>
+      <label>Material<input id="exerciseEquipment" placeholder="Ex.: 12 cones, 8 coletes e 4 bolas"></label>
+      <label>Organização<textarea id="exerciseDescription" placeholder="Como organizar jogadores, espaço e início do exercício…"></textarea></label>
+      <label>Regras e pontuação<textarea id="exerciseRules" placeholder="Condições, limitações e sistema de pontuação…"></textarea></label>
+      <div class="meta-grid text-grid">
+        <label>Variantes<textarea id="exerciseVariants" placeholder="Progressões ou regressões…"></textarea></label>
+        <label>Critérios de êxito<textarea id="exerciseSuccess" placeholder="O que deve ser observado e corrigido…"></textarea></label>
+      </div>
+    </section>
+    <section class="builder-card card">
+      <div class="pitch-options">
+        <label>Campo<select id="pitchType"><option value="full">Completo</option><option value="half">Meio-campo</option><option value="blank">Livre</option></select></label>
+        <span id="builderStatus">Selecione uma ferramenta</span>
+      </div>
+      <div class="toolbox" id="toolbox" aria-label="Ferramentas do quadro">
+        <button class="active" data-tool="select">☝<span>Mover</span></button>
+        <button data-tool="home">●<span>Equipa A</span></button>
+        <button data-tool="away">●<span>Equipa B</span></button>
+        <button data-tool="neutral">●<span>Joker</span></button>
+        <button data-tool="ball">⚽<span>Bola</span></button>
+        <button data-tool="cone">▲<span>Cone</span></button>
+        <button data-tool="run">➜<span>Corrida</span></button>
+        <button data-tool="dribble">〰<span>Condução</span></button>
+        <button data-tool="pass">⇢<span>Passe</span></button>
+        <button data-tool="shot">➤<span>Remate</span></button>
+        <button data-tool="corner">↪<span>Canto</span></button>
+        <button data-tool="press">⇉<span>Pressão</span></button>
+        <button data-tool="zone">▧<span>Zona</span></button>
+        <button data-tool="delete">⌫<span>Apagar</span></button>
+      </div>
+      <div class="pitch-wrap"><canvas id="tacticsCanvas" width="1050" height="680" aria-label="Campo para construir o exercício"></canvas></div>
+      <div class="object-controls card-lite">
+        <label>Tamanho do elemento selecionado
+          <input id="objectSize" type="range" min="50" max="180" value="100" step="5" disabled>
+        </label>
+        <output id="objectSizeValue">100%</output>
+      </div>
+      <div class="player-properties card-lite" id="playerProperties" hidden>
+        <label>Número<input id="playerNumber" inputmode="numeric" maxlength="3"></label>
+        <label>Nome<input id="playerName" placeholder="Nome do jogador"></label>
+        <label>Cor<input id="playerColor" type="color" value="#1677ff"></label>
+        <button class="secondary small" id="duplicateObject">Duplicar</button>
+        <button class="secondary small" id="lockObject">🔓 Bloquear</button>
+      </div>
+      <div class="trajectory-controls card-lite">
+        <label>Curvatura da trajetória
+          <input id="trajectoryCurve" type="range" min="-80" max="80" value="0" step="5" disabled>
+        </label>
+        <button class="secondary small" id="straightTrajectory" disabled>Reta</button>
+        <output id="trajectoryCurveValue">0°</output>
+      </div>
+      <div class="animation-controls">
+        <button class="secondary" id="addFrame">＋ Nova etapa</button>
+        <button class="secondary" id="updateFrame" disabled>↻ Atualizar</button>
+        <button class="primary" id="playAnimation">▶ Animar</button>
+        <label>Velocidade<select id="animationSpeed"><option value="1400">Lenta</option><option value="900" selected>Normal</option><option value="550">Rápida</option></select></label>
+        <span id="frameCount">0 etapas</span>
+      </div>
+      <div class="timeline" id="timeline"><div class="empty">Guarde a primeira etapa para criar a animação.</div></div>
+      <details class="animation-guide">
+        <summary>Como animar uma jogada ou exercício</summary>
+        <ol>
+          <li>Coloque jogadores, bola e trajetórias nas posições iniciais.</li>
+          <li>Carregue em <b>Nova etapa</b>.</li>
+          <li>Escolha <b>Mover</b> e desloque jogadores e bola para as posições seguintes.</li>
+          <li>Para curvar um passe, remate ou canto, selecione a seta e ajuste <b>Curvatura da trajetória</b>.</li>
+          <li>Crie a etapa seguinte. Use a linha temporal para abrir, atualizar, duplicar, ordenar ou eliminar etapas.</li>
+          <li>Escolha a velocidade e carregue em <b>Animar</b>.</li>
+        </ol>
+        <p><b>Dica:</b> mova também a bola em cada etapa para representar passes, remates e cantos.</p>
+      </details>
+      <div class="canvas-actions"><button class="secondary" id="undoBoard">↶ Anular</button><button class="secondary" id="clearBoard">Limpar campo</button></div>
+    </section>
+    <section class="builder-actions"><button class="primary" id="saveExercise">✓ Guardar exercício</button><button class="secondary" id="exportExercise">⤓ Exportar imagem</button></section>
+    <section class="exercise-library card">
+      <div class="section-title compact"><h2>Os meus exercícios</h2><span id="exerciseCount">0 guardados</span></div>
+      <div id="exerciseList" class="empty">Ainda não existem exercícios guardados.</div>
+    </section>
+  </main>
+
+  <dialog class="discipline-dialog" id="cardDialog">
+    <form method="dialog">
+      <div class="dialog-title"><div><span class="eyebrow">REGISTO DISCIPLINAR</span><h2 id="cardDialogTitle">Cartão amarelo</h2></div><button value="cancel" class="dialog-close" aria-label="Fechar">×</button></div>
+      <div class="discipline-grid">
+        <label>Equipa<select id="cardTeam"><option value="observed">Equipa observada</option><option value="opponent">Adversário</option></select></label>
+        <label>Jogador<select id="cardPlayer"><option value="">Sem identificação</option></select></label>
+        <label>Jogador manual<input id="cardPlayerManual" placeholder="N.º ou nome, se não estiver na lista"></label>
+        <label>Motivo<select id="cardReason"><option value="">Não especificado</option><option>Falta tática</option><option>Entrada imprudente</option><option>Protestos</option><option>Comportamento antidesportivo</option><option>Impedir ataque prometedor</option><option>Impedir ocasião clara de golo</option><option>Outro</option></select></label>
+        <label class="dialog-full">Nota<textarea id="cardNote" placeholder="Contexto adicional…"></textarea></label>
+      </div>
+      <div class="card-warning" id="cardWarning" hidden>⚠️ Este jogador já tem um cartão amarelo.</div>
+      <div class="dialog-actions"><button value="cancel" class="secondary">Cancelar</button><button type="button" class="primary" id="confirmCard">Registar cartão</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+  <script type="module" src="firebase-sync.js"></script>
+</body>
+</html>

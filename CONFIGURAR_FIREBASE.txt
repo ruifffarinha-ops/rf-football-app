@@ -1,0 +1,26 @@
+RF FOOTBALL — CONFIGURAÇÃO DO FIREBASE
+
+1. AUTENTICAÇÃO
+- Abra Firebase Console > Authentication.
+- Em Métodos de início de sessão, ative Email/Palavra-passe.
+- Em Utilizadores, crie apenas a conta do Rui.
+- A aplicação não permite criar contas novas.
+
+2. CLOUD FIRESTORE
+- Abra Firestore Database e crie a base de dados em modo de produção.
+- Escolha uma localização europeia próxima.
+- Abra o separador Regras.
+- Copie todo o conteúdo do ficheiro firestore.rules.
+- Carregue em Publicar.
+
+3. DOMÍNIOS AUTORIZADOS
+- Em Authentication > Definições > Domínios autorizados, adicione o domínio onde a aplicação será publicada.
+- localhost já pode ser usado para testes locais servidos por um servidor web.
+
+4. PUBLICAÇÃO
+- Publique todos os ficheiros desta pasta no repositório GitHub Pages da RF Football.
+- Não abra apenas o index.html por duplo clique: a aplicação deve ser servida por HTTPS ou por um servidor local.
+
+5. SEGURANÇA
+- O firebaseConfig de uma aplicação Web identifica o projeto, mas não substitui as regras de segurança.
+- As regras incluídas isolam os dados pelo UID do utilizador autenticado e negam os restantes caminhos.
