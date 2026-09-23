@@ -150,7 +150,7 @@ $('#eventTypeFilter').onchange=renderEvents;$('#eventPeriodFilter').onchange=ren
 $('#printBtn').onclick=()=>window.print();
 $('#saveReportBtn').onclick=saveCurrentReport;
 $('#shareBtn').onclick=async()=>{renderReport();const text=`Relatório: ${state.team}\n${generateInsights().join('\n')}\nAtaques: ${count('attack')} · Remates: ${count('shot')} · Golos: ${state.score}\nPontos fortes: ${state.strengths||'—'}\nPontos fracos: ${state.weaknesses||state.vulnerabilities||'—'}\nComo explorar: ${state.howToExploit||'—'}\nTreino recomendado: ${state.trainingRecommendations||'—'}`;if(navigator.share){try{await navigator.share({title:`Observação — ${state.team}`,text})}catch{}}else{await navigator.clipboard.writeText(text);toast('Relatório copiado')}};
-sync();renderReportLibrary(); if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js?v=6');
+sync();renderReportLibrary(); if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js?v=7');
 
 // Construtor de exercícios
 const canvas=$('#tacticsCanvas'),ctx=canvas.getContext('2d');
